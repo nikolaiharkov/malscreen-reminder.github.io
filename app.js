@@ -12,7 +12,7 @@ $(document).ready(function () {
 
         const reminder = {
             activity: activity,
-            time: convertToUTC7(date, time),
+            time: convertToUTC(date, time),
             userUUID: getUserUUID()
         };
 
@@ -86,24 +86,33 @@ $(document).ready(function () {
     function checkReminders() {
         const userUUID = getUserUUID();
         $.ajax({
-            url: `${couchDBURL}/_design/user/_view/byUUID?key="${userUUID}"&include_docs=true`,
+            url: 'http://worldtimeapi.org/api/timezone/Asia/Jakarta',
             type: 'GET',
-            beforeSend: function (xhr) {
-                xhr.setRequestHeader("Authorization", auth);
-            },
             success: function (response) {
-                const now = new Date().toISOString();
-                response.rows.forEach(row => {
-                    const reminder = row.doc;
-                    if (new Date(reminder.time).toISOString() <= now) {
-                        showNotification(reminder.activity);
-                        // Optional: Delete the reminder after showing the notification
-                        deleteReminder(reminder._id, reminder._rev);
+                const now = response.utc_datetime;
+                $.ajax({
+                    url: `${couchDBURL}/_design/user/_view/byUUID?key="${userUUID}"&include_docs=true`,
+                    type: 'GET',
+                    beforeSend: function (xhr) {
+                        xhr.setRequestHeader("Authorization", auth);
+                    },
+                    success: function (response) {
+                        response.rows.forEach(row => {
+                            const reminder = row.doc;
+                            if (new Date(reminder.time).toISOString() <= now) {
+                                showNotification(reminder.activity);
+                                // Optional: Delete the reminder after showing the notification
+                                deleteReminder(reminder._id, reminder._rev);
+                            }
+                        });
+                    },
+                    error: function (error) {
+                        console.error('Error checking reminders:', error);
                     }
                 });
             },
             error: function (error) {
-                console.error('Error checking reminders:', error);
+                console.error('Error fetching current time:', error);
             }
         });
     }
