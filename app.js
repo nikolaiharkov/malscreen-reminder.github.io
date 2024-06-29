@@ -152,7 +152,7 @@ $(document).ready(function () {
 
     function convertToUTC7(date, time) {
         const dateTime = new Date(`${date}T${time}:00`);
-        const utc7Time = new Date(dateTime.getTime() - (7 * 60 * 60 * 1000));
+        const utc7Time = new Date(dateTime.getTime());
         return utc7Time.toISOString();
     }
 
