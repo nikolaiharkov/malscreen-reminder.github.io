@@ -150,10 +150,9 @@ $(document).ready(function () {
         return userUUID;
     }
 
-    function convertToUTC7(date, time) {
-        const dateTime = new Date(`${date}T${time}:00`);
-        const utc7Time = new Date(dateTime.getTime());
-        return utc7Time.toISOString();
+    function convertToUTC(date, time) {
+        const dateTime = new Date(`${date}T${time}:00Z`);
+        return dateTime.toISOString();
     }
 
     // Fetch reminders on page load
