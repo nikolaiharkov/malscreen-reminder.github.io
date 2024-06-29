@@ -160,7 +160,7 @@ $(document).ready(function () {
     }
 
     function convertToUTC(date, time) {
-        const dateTime = new Date(`${date}T${time}:00Z`);
+        const dateTime = new Date(`${date}T${time}:000`);
         return dateTime.toISOString();
     }
 
